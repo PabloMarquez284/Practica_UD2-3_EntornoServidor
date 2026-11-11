@@ -1,6 +1,8 @@
 # Sistema de Reserva de Equipos Informáticos
 
-Esta aplicación web modular está construida con Node.js, Express y TypeScript, aplicando una arquitectura limpia y bien estructurada (Dominio, Servicios, Repositorios en memoria y Controladores), con renderizado dinámico en servidor y seguridad por sesiones.
+Este trabajo consta de desarrollar una **aplicación web para gestionar la reserva de equipos informáticos de un centro educativo**. Esta aplicación web modular está construida con **Node.js**, **Express** y **TypeScript**, aplicando una arquitectura limpia y bien estructurada (**Dominio, Servicios, Repositorios en memoria y Controladores**), con renderizado dinámico en servidor y seguridad por sesiones. 
+
+Este trabajo lo he realizado junto con el apoyo de la IA, guiándome paso a paso y ayudándome en los errores que he tenido. Dejo por aquí el enlace al chat con Gemini: https://gemini.google.com/share/d/1PFyu4wKEL8gWkWagfgxig7h_KiVOeC5c?usp=sharing
 
 ## Desglose Detallado de lo Realizado
 
