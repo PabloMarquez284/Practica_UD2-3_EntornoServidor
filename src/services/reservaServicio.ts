@@ -12,6 +12,11 @@ export class ReservaServicio {
         return this.repo.obtenerTodas();
     }
 
+    // Método para obtener reservas de un usuario concreto
+    async obtenerPorUsuario(usuarioId: number): Promise<Reserva[]> {
+        return this.repo.obtenerPorUsuario(usuarioId);
+    }
+
     // Método para crear una reserva
     async crearReserva(datos: {
         equipoId: number;
@@ -33,12 +38,27 @@ export class ReservaServicio {
     }
 
     // Método para cancelar una reserva
-    async cancelarReserva(id: number): Promise<Reserva> {
-        // Aplicar la regla de negocio, verificando si esta cancelada o no existe
-        const reserva = this.repo.actualizarEstado(id, 'cancelada');
-            if (!reserva) {
-                throw new ErrorDominio('NO_ENCONTRADO', 'La reserva solicitada no existe.');
-            }
-        return reserva;
+    async cancelarReserva(id: number, usuarioId: number): Promise<Reserva> {
+        const reserva = this.repo.obtenerPorId(id);
+
+        if (!reserva) {
+            throw new ErrorDominio('NO_ENCONTRADO', 'La reserva no existe.');
+        }
+
+        // Regla de seguridad: Solo el usuario dueño de la reserva puede cancelarla
+        if (reserva.usuarioId !== usuarioId) {
+            throw new ErrorDominio('DATOS_INVALIDOS', 'No tienes permiso para cancelar esta reserva.');
+        }
+
+        if (reserva.estado === 'cancelada') {
+            throw new ErrorDominio('DATOS_INVALIDOS', 'La reserva ya se encuentra cancelada.');
+        }
+
+        const actualizada = this.repo.actualizarEstado(id, 'cancelada');
+        if (!actualizada) {
+            throw new ErrorDominio('NO_ENCONTRADO', 'No se pudo actualizar la reserva.');
+        }
+
+        return actualizada;
     }
 }

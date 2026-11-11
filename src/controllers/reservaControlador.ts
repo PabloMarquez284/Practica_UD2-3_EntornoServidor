@@ -36,13 +36,42 @@ export class ReservaControlador {
         }
     };
 
+    // Obtener SOLO las reservas del usuario autenticado (Para GET /mis-reservas)
+    mostrarMisReservas = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const usuarioIdSession = req.session.usuarioId;
+            if (!usuarioIdSession) {
+                return res.redirect(303, '/login');
+            }
+
+            const reservas = await this.servicio.obtenerPorUsuario(usuarioIdSession);
+            const aviso = req.session?.aviso ?? null;
+
+            if (req.session) {
+                delete req.session.aviso;
+            }
+
+            req.session?.save(err => {
+                if (err) return next(err);
+
+                const vm = crearReservaVM({ reservas: reservas || [], aviso: aviso });
+                res.render('reservas/mis-reservas', { vm });
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
     // Crear una nueva reserva y manejar la respuesta
     crearReserva = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const { equipoId, usuarioId, fecha, turno } = req.body;
+            const { equipoId, fecha, turno } = req.body;
+
+            // Extraemos el usuarioId del servidor, para que no pueda ser manipulado por el usuario
+            const usuarioIdSession = req.session.usuarioId;
 
             // Validación de los campos antes del servicio
-            if (!equipoId || !usuarioId || !fecha || !turno) {
+            if (!equipoId || !fecha || !turno) {
                 const reservas = await this.servicio.obtenerTodas();
                 const vm = crearReservaVM({
                     reservas,
@@ -51,16 +80,19 @@ export class ReservaControlador {
                 return res.status(400).render('reservas/index', { vm });
             }
 
+            if (!usuarioIdSession) {
+                return res.redirect(303, '/login');
+            } 
+
             // Convertir los valores a los tipos esperados
             const equipoIdNum = Number.parseInt(equipoId, 10);
-            const usuarioIdNum = Number.parseInt(usuarioId, 10);
 
             // Validación de los campos numéricos
-            if (Number.isNaN(equipoIdNum) || Number.isNaN(usuarioIdNum)) {
+            if (Number.isNaN(equipoIdNum)) {
                 const reservas = await this.servicio.obtenerTodas();
                 const vm = crearReservaVM({
                     reservas,
-                    errores: ['Los campos "equipo" y "usuario" deben ser números válidos.']
+                    errores: [ 'El identificador del equipo debe ser un número válido']
                 });
                 return res.status(400).render('reservas/index', { vm });
             }
@@ -68,7 +100,7 @@ export class ReservaControlador {
             // Llamada al servicio para crear la reserva
             await this.servicio.crearReserva({
                 equipoId: equipoIdNum,
-                usuarioId: usuarioIdNum,
+                usuarioId: usuarioIdSession,
                 fecha: String(fecha),
                 turno
             });
@@ -87,12 +119,19 @@ export class ReservaControlador {
     cancelarReserva = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { id } = req.params;
-            await this.servicio.cancelarReserva(Number(id));
+            const usuarioIdSession = req.session.usuarioId;
+
+            if (!usuarioIdSession) {
+                return res.redirect(303, '/login');
+            }
+
+            // Pasamos tanto el id de la reserva como el id del usuario logueado
+            await this.servicio.cancelarReserva(Number(id), usuarioIdSession);
 
             if (req.session) {
                 req.session.aviso = 'Reserva cancelada correctamente.';
             }
-            res.redirect(303, '/reservas');
+            res.redirect(303, '/mis-reservas');
         } catch (err) {
             next(err);
         }

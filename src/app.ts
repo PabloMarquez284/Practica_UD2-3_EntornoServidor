@@ -8,6 +8,9 @@ import { UsuarioRepositorio } from './repositories/usuarioRepositorio.js';
 import { UsuarioServicio } from './services/usuarioServicio.js';
 import { AuthControlador } from './controllers/authControlador.js';
 import { crearAuthRutas } from './routes/authRutas.js';
+import { EquipoRepositorio } from './repositories/equipoRepositorio.js';
+import { EquipoServicio } from './services/equipoServicio.js';
+import { crearAdminRutas } from './routes/adminRutas.js';
 import express from 'express';
 import session from 'express-session';
 
@@ -37,11 +40,14 @@ const reservaControlador = new ReservaControlador(reservaServicio);
 const usuarioRepositorio = new UsuarioRepositorio();
 const usuarioServicio = new UsuarioServicio(usuarioRepositorio);
 const authControlador = new AuthControlador(usuarioServicio);
+const equipoRepositorio = new EquipoRepositorio();
+const equipoServicio = new EquipoServicio(equipoRepositorio);
 
 // Montar las rutas
 app.use(crearRutasReserva(reservaControlador));
 app.use(tratarError);
 app.use('/', crearAuthRutas(authControlador));
+app.use('/admin', crearAdminRutas(equipoServicio, reservaServicio, usuarioRepositorio));
 
 // Exportar la aplicación para su uso en otros módulos
 export { app};
