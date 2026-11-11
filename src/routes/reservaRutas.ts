@@ -8,9 +8,9 @@ export function crearRutasReserva(controlador: ReservaControlador) {
     const router = Router();
 
     // Definir rutas y asociarlas con los métodos del controlador
-    router.get('/reservas', controlador.obtenerReservas);
-    router.post('/reservas', controlador.crearReserva);
-    router.post('/reservas/:id/cancelar', controlador.cancelarReserva);
+    router.get('/reservas', controlador.obtenerReservas.bind(controlador));
+    router.post('/reservas', controlador.crearReserva.bind(controlador));
+    router.post('/reservas/:id/cancelar', controlador.cancelarReserva.bind(controlador));
 
     // Devolver el enrutador configurado
     return router;

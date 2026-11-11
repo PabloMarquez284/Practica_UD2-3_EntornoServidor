@@ -11,6 +11,7 @@ import session from 'express-session';
 const app = express();
 
 // Middlewares base
+app.use(express.static('public')); // Servir css desde la carpeta 'public'
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

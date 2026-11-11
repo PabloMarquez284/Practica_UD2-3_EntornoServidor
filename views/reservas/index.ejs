@@ -1,0 +1,62 @@
+<%- include('../partials/cabecera') %>
+
+<!-- Comprueba si existe un aviso -->
+<% if (vm.aviso) { %>
+    <p class="aviso"><%= vm.aviso %></p>
+<% } %>
+
+<!-- Comprueba si existe un error -->
+<% if (vm.errores && vm.errores.length > 0) { %>
+    <ul class="errores">
+        <% vm.errores.forEach(function(error) { %>
+            <li><%= error %></li>
+        <% }); %>
+    </ul>
+<% } %>
+
+<!-- Formulario para crear una reserva -->
+<h2>Crear una nueva reserva</h2>
+<form action="/reservas" method="POST">
+    <label for="equipoId">ID Equipo:</label>
+    <input type="text" id="equipoId" name="equipoId" required>
+
+    <label for="usuarioId">ID Usuario:</label>
+    <input type="text" id="usuarioId" name="usuarioId" required>
+
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha" name="fecha" required>
+    
+    <label for="turno">Turno:</label>
+    <select id="turno" name="turno" required>
+        <option value="" selected hidden></option>
+        <option value="MAÑANA">Mañana</option>
+        <option value="TARDE">Tarde</option>
+    </select>
+    
+    <button type="submit">Crear Reserva</button>
+</form>
+
+<!-- Lista de reservas existentes -->
+<h2>Reservas existentes</h2>
+<ul>
+    <% if (vm.errores && vm.errores.length > 0) { %>
+        <% vm.reservas.forEach(function(reserva) { %>
+            <li>
+                ID: <%= reserva.id %>, 
+                Equipo ID: <%= reserva.equipoId %>, 
+                Usuario ID: <%= reserva.usuarioId %>, 
+                Fecha: <%= reserva.fecha %>, 
+                Turno: <%= reserva.turno %>
+            </li>
+
+            <!-- Formulario para eliminar una reserva -->
+            <form action="/reservas/<%= reserva.id %>/cancelar" method="POST">
+                <button type="submit">Eliminar</button>
+            </form>
+        <% }); %>
+    <% } else { %>
+        <p>No hay reservas disponibles.</p>
+    <% } %>
+</ul>
+
+<%- include('../partials/pie') %>

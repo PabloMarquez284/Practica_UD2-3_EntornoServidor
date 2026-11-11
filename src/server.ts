@@ -11,7 +11,7 @@ if (!process.env.PORT || !process.env.NODE_ENV || !process.env.SESSION_SECRET) {
 import { app } from './app.js';
 
 // Definición del puerto
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Llamada al servidor
 app.listen(PORT, () => {

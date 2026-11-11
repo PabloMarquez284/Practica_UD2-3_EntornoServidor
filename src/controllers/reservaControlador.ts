@@ -27,7 +27,7 @@ export class ReservaControlador {
                 if (err) return next(err); 
                 
                 // Crear el modelo de vista y renderizar la plantilla
-                const vm = crearReservaVM({ reservas, aviso });
+                const vm = crearReservaVM({ reservas: reservas || [], aviso: aviso });
                 res.render('reservas/index', { vm });
             });
         } catch (err) {
