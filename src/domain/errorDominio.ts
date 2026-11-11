@@ -1,5 +1,5 @@
 // Definición de tipos de errores
-export type CodigoError = 'DATOS_INVALIDOS' | 'NO_ENCONTRADO' | 'NO_DISPONIBLE' | 'PLAZO_NO_PERMITIDO';
+export type CodigoError = 'DATOS_INVALIDOS' | 'NO_ENCONTRADO' | 'NO_DISPONIBLE' | 'PLAZO_NO_PERMITIDO' | 'CREDENCIALES_INVALIDAS' | 'EMAIL_DUPLICADO';
 
 // Clase de error de dominio
 export class ErrorDominio extends Error {

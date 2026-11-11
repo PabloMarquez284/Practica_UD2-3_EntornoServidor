@@ -8,9 +8,9 @@ export class ReservaRepositorio implements RepositorioReservas {
 
     // Constructor con datos de prueba iniciales
     constructor() {
-        this.crear({ equipoId: 1, usuarioId: 1, fecha: '2026-06-01', turno: 'mañana', estado: 'activa' });
-        this.crear({ equipoId: 2, usuarioId: 2, fecha: '2025-05-02', turno: 'tarde', estado: 'activa' });
-        this.crear({ equipoId: 1, usuarioId: 3, fecha: '2024-04-03', turno: 'mañana', estado: 'cancelada' });
+        this.crear({ equipoId: 1, usuarioId: 1, fecha: '2027-06-01', turno: 'manana', estado: 'activa' });
+        this.crear({ equipoId: 2, usuarioId: 2, fecha: '2027-05-02', turno: 'tarde', estado: 'activa' });
+        this.crear({ equipoId: 1, usuarioId: 3, fecha: '2027-04-03', turno: 'manana', estado: 'cancelada' });
     }
 
     // Implementación de métodos del repositorio

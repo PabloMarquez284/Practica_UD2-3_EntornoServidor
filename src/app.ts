@@ -4,6 +4,10 @@ import { ReservaControlador } from './controllers/reservaControlador.js';
 import { ReservaServicio } from './services/reservaServicio.js';
 import { crearRutasReserva } from './routes/reservaRutas.js';
 import { tratarError } from './middlewares/tratarError.js';
+import { UsuarioRepositorio } from './repositories/usuarioRepositorio.js';
+import { UsuarioServicio } from './services/usuarioServicio.js';
+import { AuthControlador } from './controllers/authControlador.js';
+import { crearAuthRutas } from './routes/authRutas.js';
 import express from 'express';
 import session from 'express-session';
 
@@ -30,8 +34,14 @@ app.set('views', './views');
 const reservaRepositorio = new ReservaRepositorio();
 const reservaServicio = new ReservaServicio(reservaRepositorio);
 const reservaControlador = new ReservaControlador(reservaServicio);
+const usuarioRepositorio = new UsuarioRepositorio();
+const usuarioServicio = new UsuarioServicio(usuarioRepositorio);
+const authControlador = new AuthControlador(usuarioServicio);
+
+// Montar las rutas
 app.use(crearRutasReserva(reservaControlador));
 app.use(tratarError);
+app.use('/', crearAuthRutas(authControlador));
 
 // Exportar la aplicación para su uso en otros módulos
 export { app};

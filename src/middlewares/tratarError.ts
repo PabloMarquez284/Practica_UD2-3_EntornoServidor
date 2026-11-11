@@ -24,6 +24,12 @@ export function tratarError(err: any, req: Request, res: Response, next: NextFun
             case 'PLAZO_NO_PERMITIDO':
                 res.status(403).json({ error: err.message });
                 break;
+            case 'CREDENCIALES_INVALIDAS':
+                res.status(401).json({ error: err.message });
+                break;
+            case 'EMAIL_DUPLICADO':
+                res.status(400).json({ error: err.message });
+                break;
             default:
                 res.status(500).json({ error: 'Error de dominio desconocido' });
         }   
