@@ -1,6 +1,7 @@
 // Importaciones
 import { Request, Response, NextFunction } from 'express';
 import { UsuarioServicio } from '../services/usuarioServicio.js';
+import { ErrorDominio } from '../domain/errorDominio.js';
 
 // Crear clase de autenticación
 export class AuthControlador {
@@ -17,20 +18,6 @@ export class AuthControlador {
                 errores: []
             }
         });
-    }
-
-    // POST /registro
-    public async registro(req: Request, res: Response, next: NextFunction): Promise<void> {
-        try {
-            const { nombre, email, password } = req.body;
-
-            await this.servicio.registrar(nombre, email, password);
-
-            req.session.aviso = 'Registro completado con éxito. Ya puedes iniciar sesión.';
-            return res.redirect(303, '/login');
-        } catch (error) {
-            next(error);
-        }
     }
 
     // GET /login
@@ -54,7 +41,7 @@ export class AuthControlador {
             // Validar credenciales con el servicio
             const usuario = await this.servicio.autenticar(email, password);
 
-            // Regenerar sesión y guardar solo el usuarioId
+            // Regenerar sesión y guardar usuarioId
             req.session.regenerate((err) => {
                 if (err) return next(err);
 
@@ -64,6 +51,30 @@ export class AuthControlador {
                 return res.redirect(303, '/reservas');
             });
         } catch (error) {
+            // Si el error es de tipo ErrorDominio (credenciales o datos inválidos)
+            if (error instanceof ErrorDominio) {
+                req.session.aviso = error.message;
+                return res.redirect(303, '/login');
+            }
+            // Si es un error no controlado (ej: fallo de base de datos), pasa al middleware centralizado
+            next(error);
+        }
+    }
+
+    // POST /registro
+    public async registro(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { nombre, email, password } = req.body;
+
+            await this.servicio.registrar(nombre, email, password);
+
+            req.session.aviso = 'Registro completado con éxito. Ya puedes iniciar sesión.';
+            return res.redirect(303, '/login');
+        } catch (error) {
+            if (error instanceof ErrorDominio) {
+                req.session.aviso = error.message;
+                return res.redirect(303, '/registro');
+            }
             next(error);
         }
     }

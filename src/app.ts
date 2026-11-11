@@ -11,11 +11,12 @@ import { crearAuthRutas } from './routes/authRutas.js';
 import { EquipoRepositorio } from './repositories/equipoRepositorio.js';
 import { EquipoServicio } from './services/equipoServicio.js';
 import { crearAdminRutas } from './routes/adminRutas.js';
+import { crearEquipoRutas } from './routes/equipoRutas.js';
 import express from 'express';
 import session from 'express-session';
 
 // Crear una instancia de la aplicación Express
-const app = express();
+export const app = express();
 
 // Middlewares base
 app.use(express.static('public')); // Servir css desde la carpeta 'public'
@@ -48,6 +49,4 @@ app.use(crearRutasReserva(reservaControlador));
 app.use(tratarError);
 app.use('/', crearAuthRutas(authControlador));
 app.use('/admin', crearAdminRutas(equipoServicio, reservaServicio, usuarioRepositorio));
-
-// Exportar la aplicación para su uso en otros módulos
-export { app};
+app.use('/', crearEquipoRutas(equipoServicio));
