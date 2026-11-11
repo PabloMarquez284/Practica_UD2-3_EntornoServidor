@@ -44,3 +44,12 @@ interface RepositorioReservas {
 // Exportación de tipos e interfaces
 export type { Rol, Turno, EstadoEquipo, EstadoReserva, TipoEquipo };
 export type { Equipo, Reserva, Usuario, RepositorioReservas };
+
+import 'express-session';
+
+// Extensión para incluir el aviso en la sesión de Express
+declare module 'express-session' {
+    interface SessionData {
+        aviso?: string;
+    }
+}
